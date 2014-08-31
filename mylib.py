@@ -9,7 +9,8 @@ plotDir = "plots"
 #==============================================================================
 
 endl = "\n"
-
+MONTH_MAP = {'Jan':1, 'Feb':2, 'Mar':3, 'Apr':4, 'May':5, 'Jun':6, 
+			'Jul':7, 'Aug':8, 'Sep':9, 'Oct':10, 'Nov':11, 'Dec':12}
 #==============================================================================
 
 
@@ -34,21 +35,98 @@ The format of arr is given below :
 '''
 #==============================================================================
 
+'''
+10.2.64.116 - 120050083  [23/Aug/2014:07:41:16 +0530] 
+GET /quiz/api/quiz/431/?format=json HTTP/1.1
+ 200 137 
+http://bodhitree1.cse.iitb.ac.in/concept/62/
+Mozilla/5.0 (Windows NT 6.3; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0
+ 0.007 0.007 .
+'''
+
+
+def compareTime(timestamp1, timestamp2): 
+	#timestamp=[year, month, day, timeInSeconds]
+	for x,y in zip(timestamp1, timestamp2):
+		if(x == y):
+			continue
+		else:
+			return (x-y) #return positive if t1>t2, else negative
+	return 0 #In case everything is equal
+
+ipUserMap={}
+def createIpUserMap(lines):
+	global ipUserMap
+	'''
+	ipUserMap
+	{IP : {username:[year, month, day, timeInSeconds]} }
+	Also, The date and time are corresponding to the first request by that user.
+	'''
+	for line in lines:
+		arr = getArray(line)
+		ip = getIP(arr)
+		username = getRawUsername(arr)
+		if username == '-':
+			continue
+		if ipUserMap.has_key(ip):
+			if not ipUserMap[ip].has_key(username):
+				ipUserMap[ip][username] = getDate(arr)+[timeInSeconds(getTime(arr))]
+		else:
+			ipUserMap[ip] = {username:getDate(arr)+[timeInSeconds(getTime(arr))]}
+	return ipUserMap
+
 def getArray(line):
 	arr = line.split('"')
 	if(" " in arr):
 		arr.remove(" ")
 	return arr
 
-def getEmailAddr(arr):
-	return arr[0].strip().split(" ")[0]
+def getRawUsername(arr):
+	return arr[0].strip().split(" ")[2]
+
+def sortOrder(item):
+	val = item[1]
+	return (val[0]-2012)*365*24*3600 + val[1]*30*24*3600 + val[2]*24*3600 +  val[3]
+
+def getUsername(arr):
+	username = getRawUsername(arr)
+	if username != '-':
+		return username
+	else:
+		if len(ipUserMap)==0:
+			print "Initialize ipUserMap first."
+			exit(0)
+		else:
+			if ipUserMap.has_key(getIP(arr)):
+				usernameTimeMap = ipUserMap[getIP(arr)]
+				l = sorted(usernameTimeMap.iteritems(), key=sortOrder,reverse=True)
+				timestamps = [timestamp for username,timestamp in l]
+				mytimestamp = getDate(arr)+[timeInSeconds(getTime(arr))]
+				username = l[usernameIndex(timestamps, mytimestamp)][0]
+				return username
+			else:
+				return "dummyUser"
+
+def usernameIndex(timestampList, timestamp ):
+	for index in range(len(timestampList)):
+		ts = timestampList[index]
+		if compareTime(ts, timestamp)>0:
+			return index
+	return -1
 
 def getIP(arr):
-	return arr[0].strip().split(" ")[1]
+	return arr[0].strip().split(" ")[0]
 
+
+def nameme():
+	return "vivek"
+gl=nameme()
 def getDate(arr):
 	date = arr[0].strip().split(" ")[-2].split(":")[0][1:]
-	return date
+	date = date.split('/')
+	date[1] = MONTH_MAP[date[1]]
+	date = [int(x) for x in date]
+	return list(reversed(date))	#[year, month, day]
 
 def getTime(arr): 
 	temp = arr[0].strip().split(":")

@@ -16,7 +16,7 @@ for line in lines:
 	arr = getArray(line)
 	status_code = getStatusCode(arr)
 	if(status_code==200):
-		username = getEmailAddr(arr)
+		username = getUsername(arr)
 		request = getCompleteRequest(arr)
 		reqObject = request.split()[1].strip()
 		videoName = reqObject.split('/')[-1]

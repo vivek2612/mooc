@@ -21,7 +21,7 @@ userMap={}
 prevtime = 0
 for line in lines:
 	arr = getArray(line)
-	username = str(getEmailAddr(arr))
+	username = str(getUsername(arr))
 	if getStatusCode(arr) != 200 or username == "-" or getReqSize(arr)==0:
 		continue
 	reqType = getReqType(arr)
