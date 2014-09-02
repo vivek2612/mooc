@@ -12,9 +12,9 @@ Ans : I found that, whole file => 626 entries
 					Not much difference
 '''
 
-files = sys.argv[1]
-print files
-fname = files
+fname = sys.argv[1]
+saveflag=int(sys.argv[2])
+print fname
 
 lines = readFile(fname)
 histarr=[]
@@ -27,7 +27,7 @@ for line in lines:
 	status_code = getStatusCode(arr)
 
 	oneMB = 1024*1024
-	if(req_size > oneMB and resp_time != 0 and status_code==200):
+	if(req_size > oneMB and resp_time != 0 and isValidStatusCode(status_code)):
 		bandwidth = (req_size/resp_time)/1024.0 #KBpS
 		if ip in user_bandwidthMap.keys():
 			user_bandwidthMap[ip].append(bandwidth)
@@ -41,12 +41,12 @@ for ip,bandwidths in user_bandwidthMap.items():
 
 
 
-l=range(0,1000,50)
 print printStats(average_bandwidths)
 # plotHistogram(l, cumulative_flag=True,nbins=10, both=False, isNormed=False,saveflag=0 ,xlabel="xlabel", title="Title", legendLoc=4):
 
-saveflag=int(sys.argv[2])
-result = plotHistogram1(average_bandwidths, False, l, False, False,saveflag,"client bandwidth in KBPS", fname+" : bandwidth distribution",1 )
+
+
+result = plotHistogram(average_bandwidths,False, 20, False, False,saveflag,"client bandwidth in KBPS", fname+" : bandwidth distribution",1 )
 
 
 

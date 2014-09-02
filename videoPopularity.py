@@ -20,7 +20,7 @@ histArr=[]
 for line in lines:
 	arr = getArray(line)
 	status_code = getStatusCode(arr)
-	if(status_code==200):
+	if isValidStatusCode(status_code):
 		request = getCompleteRequest(arr)
 		reqObject = request.split()[1].strip()
 		videoName = reqObject.split('/')[-1]
@@ -45,13 +45,13 @@ plt.setp(labels, rotation=90)
 plt.grid()
 
 plt.xlabel("Video Name")
-plt.ylabel("Fraction of requests ")
+plt.ylabel("Percentage of requests ")
 plt.title(fname+" : Video popularity")
 
+title="Video popularity"
 if(saveflag):
 	plt.savefig(plotDir+"/"+title+".png")
 else:
 	plt.show()
 
-# plt.savefig('plots/videoPopularity.png')
 

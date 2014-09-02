@@ -2,20 +2,18 @@ import sys
 import os
 from mylib import *
 
-files = sys.argv[1]
-print files
+fname = sys.argv[1]
+print fname
 # Need a video-requests file for it. 
-fname = files
 
 lines = readFile(fname)
-'''
-GET /media/static/video/transport-review.mp4 HTTP/1.1
-'''
+createIpUserMap(lines)
+
 videosPerDayPerUser={}
 for line in lines:
 	arr = getArray(line)
 	status_code = getStatusCode(arr)
-	if(status_code==200):
+	if isValidStatusCode(status_code):
 		username = getUsername(arr)
 		request = getCompleteRequest(arr)
 		reqObject = request.split()[1].strip()

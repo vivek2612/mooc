@@ -20,7 +20,7 @@ import numpy as np
 
 files = sys.argv[1]
 saveflag=int(sys.argv[2])
-print files
+print files, saveflag
 fname = files
 
 requestMap={}
@@ -42,7 +42,7 @@ for line in lines:
 	arr = getArray(line)
 	status_code = getStatusCode(arr)
 	reqSize = getReqSize(arr)
-	if(status_code!=200 or reqSize==0):
+	if(not isValidStatusCode(status_code) or reqSize==0):
 		continue
 
 	request = getCompleteRequest(arr)
@@ -71,12 +71,12 @@ for line in lines:
 
 labels = requestMap.keys()
 fracs = [value[0] for value in requestMap.values()]
-title = fname+ ': Fraction of each type of request'  
+title = 'Fraction of each type of request'  
 drawPieChart(labels,fracs,title,saveflag)
 
 #traffic
 fracs = [value[1] for value in requestMap.values()]
-title = fname+ ': fraction of traffic of each type of requests'
+title = 'Fraction of traffic of each type of requests'
 
 drawPieChart(labels,fracs,title,saveflag)
 

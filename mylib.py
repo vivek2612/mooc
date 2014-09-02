@@ -3,36 +3,15 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import re
+#==============================================================================
 plotDir = "plots"
-#==============================================================================
-# 							MACROS
-#==============================================================================
-
 endl = "\n"
 MONTH_MAP = {'Jan':1, 'Feb':2, 'Mar':3, 'Apr':4, 'May':5, 'Jun':6, 
 			'Jul':7, 'Aug':8, 'Sep':9, 'Oct':10, 'Nov':11, 'Dec':12}
+dummyUser = "dummyUser" # for IP 127.0.0.1
+ipUserMap={}
 #==============================================================================
 
-
-def extractDate(date_elem):
-	full_date = date_elem[1:] #date_elem = [24/Jun/2014:03:40:17
-	date = "".join(full_date.split(":")[0].split("/"))
-	return date #24Jun2014
-
-def extractTime(date_elem):
-	return [int(x) for x in  date_elem[1:].split(":")[1:]]
-
-
-'''
-The format of arr is given below : 
-
-0 - ['vishalds735@gmail.com 1.187.161.5 - [24/Jun/2014:03:40:07 +0530]  ',
-1 - 'GET /concept/3/null HTTP/1.1',
-2 - ' 404 1164 ',
-3 - 'http://14.139.97.83/concept/3/', 
-4 - 'Mozilla/5.0 (Windows NT 6.1; rv:31.0) Gecko/20100101 Firefox/31.0',
-5 - ' 0.022 0.022 .\n']
-'''
 #==============================================================================
 
 '''
@@ -44,36 +23,6 @@ Mozilla/5.0 (Windows NT 6.3; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0
  0.007 0.007 .
 '''
 
-
-def compareTime(timestamp1, timestamp2): 
-	#timestamp=[year, month, day, timeInSeconds]
-	for x,y in zip(timestamp1, timestamp2):
-		if(x == y):
-			continue
-		else:
-			return (x-y) #return positive if t1>t2, else negative
-	return 0 #In case everything is equal
-
-ipUserMap={}
-def createIpUserMap(lines):
-	global ipUserMap
-	'''
-	ipUserMap
-	{IP : {username:[year, month, day, timeInSeconds]} }
-	Also, The date and time are corresponding to the first request by that user.
-	'''
-	for line in lines:
-		arr = getArray(line)
-		ip = getIP(arr)
-		username = getRawUsername(arr)
-		if username == '-':
-			continue
-		if ipUserMap.has_key(ip):
-			if not ipUserMap[ip].has_key(username):
-				ipUserMap[ip][username] = getDate(arr)+[timeInSeconds(getTime(arr))]
-		else:
-			ipUserMap[ip] = {username:getDate(arr)+[timeInSeconds(getTime(arr))]}
-	return ipUserMap
 
 def getArray(line):
 	arr = line.split('"')
@@ -105,7 +54,7 @@ def getUsername(arr):
 				username = l[usernameIndex(timestamps, mytimestamp)][0]
 				return username
 			else:
-				return "dummyUser"
+				return dummyUser 
 
 def usernameIndex(timestampList, timestamp ):
 	for index in range(len(timestampList)):
@@ -117,10 +66,6 @@ def usernameIndex(timestampList, timestamp ):
 def getIP(arr):
 	return arr[0].strip().split(" ")[0]
 
-
-def nameme():
-	return "vivek"
-gl=nameme()
 def getDate(arr):
 	date = arr[0].strip().split(" ")[-2].split(":")[0][1:]
 	date = date.split('/')
@@ -316,3 +261,42 @@ def timeDifferenceInSecs(timeArr1, timeArr2):
 
 def timeInMinutes(timeArr):
 	return timeArr[0]*60 + timeArr[1]	
+
+
+def compareTime(timestamp1, timestamp2): 
+	#timestamp=[year, month, day, timeInSeconds]
+	for x,y in zip(timestamp1, timestamp2):
+		if(x == y):
+			continue
+		else:
+			return (x-y) #return positive if t1>t2, else negative
+	return 0 #In case everything is equal
+
+def createIpUserMap(lines):
+	global ipUserMap
+	'''
+	ipUserMap
+	{IP : {username:[year, month, day, timeInSeconds]} }
+	Also, The date and time are corresponding to the first request by that user.
+	'''
+	for line in lines:
+		arr = getArray(line)
+		ip = getIP(arr)
+		username = getRawUsername(arr)
+		if ip == '127.0.0.1':
+			username = dummyUser
+		if username == '-':
+			continue
+		if ipUserMap.has_key(ip):
+			if not ipUserMap[ip].has_key(username):
+				ipUserMap[ip][username] = getDate(arr)+[timeInSeconds(getTime(arr))]
+		else:
+			ipUserMap[ip] = {username:getDate(arr)+[timeInSeconds(getTime(arr))]}
+	return ipUserMap
+
+# 2xx responses are considered valid 
+def isValidStatusCode(statusCode):
+	if statusCode/100==2:
+		return True
+	else:
+		return False

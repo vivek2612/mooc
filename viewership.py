@@ -17,16 +17,16 @@ def createTimeLine(binSize):
 		timeLine[i] = str(hour)+":"+str(minutes)
 	return timeLine
 
-files = sys.argv[1]
-print files
-fname = files
+fname = sys.argv[1]
+saveflag = int(sys.argv[2])
+
 
 lines = readFile(fname)
 binSize = 60 #user access pattern; time gap of binsize
 countsPerBin = [0]*(24*60/binSize)
 for line in lines:
 	arr = getArray(line)
-	if(getStatusCode(arr)==200):
+	if isValidStatusCode(getStatusCode(arr)):
 		time = getTime(arr)
 		countsPerBin[findBin(time,binSize)] += 1
 
@@ -58,8 +58,7 @@ plt.xlabel("Timeline")
 ax1.set_ylabel("fraction of viewership")
 ax2.set_ylabel("Cumulative fraction of viewership")
 
-saveflag = int(sys.argv[2])
 if(saveflag):
-	plt.savefig(plotDir+"/"+title+".png")
+	plt.savefig(plotDir+"/user-access-pattern"+".png")
 else:
 	plt.show()

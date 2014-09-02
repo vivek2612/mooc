@@ -17,12 +17,18 @@ print files
 fname = files
 
 lines = readFile(fname)
+createIpUserMap(lines)
+
+
 userMap={}
 prevtime = 0
 for line in lines:
 	arr = getArray(line)
 	username = str(getUsername(arr))
-	if getStatusCode(arr) != 200 or username == "-" or getReqSize(arr)==0:
+	if username=="-":
+		print "hola"
+		exit(0)
+	if not isValidStatusCode(getStatusCode(arr)) or username == "-" or getReqSize(arr)==0:
 		continue
 	reqType = getReqType(arr)
 	timeArr = getTime(arr)
@@ -89,11 +95,11 @@ def sessionDuration(timeline):
 	duration = []
 	for i in range(len(sessionStartIndex)):
 		index = sessionStartIndex[i]
-		# print index
 		if i == len(sessionStartIndex)-1:
 			endIndex = len(timeline) - 1
 		else:
 			endIndex = sessionStartIndex[i+1] - 1
+
 		duration.append(timeline[endIndex] - timeline[index])
 	return duration
 
@@ -208,30 +214,29 @@ def interArrivals():
 
 	return overallInterArrivalTimes, overallInterArrivalTimesVideos, overallVideosPerSession
 
+def isSorted(timeline):
+	prev = 0
+	for t in timeline:
+		if t<prev:
+			print t,prev
+			return False
+		prev = t
+	return True
+
 # Plots the histogram of the session duration
 def plotSessionDuration():
 	durationList = []
 	for user in userMap.keys():
 		timeline = userMap[user][0]
+		if( not isSorted(timeline)):
+			print "ERROR : NOT SORTED ",
+			print user
+			print timeline
+			exit(0)
 		durationList += sessionDuration(timeline)
-	plotHistogram(durationList,False,20,False,False,saveflag,"Session duration",
+	plotHistogram1(durationList,False,range(0,200,10),False,False,saveflag,"Session duration(in minutes)",
 		fname+": Distribution of session duration\nAssuming threshold="+str(sessionDurationThreshold)+" minutes",1)
 
-
-# plotSessionDuration()
-# sessionCountList = sessionCountList()
-# plotHistogram(sessionCountList,False,10,False,False,1,"Number of User-sessions per day","Session Count distribution",1)
-
-# print sampleUser
-# for sampleUser in userMap.keys():
-# 	plotSession(sampleUser)
-	
-# overallInterArrivalTimes = [float(ele)/60 for ele in overallInterArrivalTimes] #Done for video objects
-# plotHistogram1(overallInterArrivalTimes,False,range(0,30,1),
-	# False,False,0,"Overall Average InterArrival Time for Videos per session(in Min)","Overall Average InterArrival Time for Videos per session",1)
-
-# plotHistogram1(overallVideosPerSession,False,range(0,50,1),
-# 	False,False,0,"Number of videos per session","Distribution of Number of videos per session",1)
 
 '''
 # def plotHistogram(l, cumulative_flag=True,nbins=10, both=False, isNormed=False,saveflag=0 ,xlabel="xlabel", title="Title", legendLoc=4):
@@ -242,12 +247,12 @@ plotHistogram(sessionCountList,False,10,False,False,saveflag,"Number of User-ses
 
 overallInterArrivalTimes, overallInterArrivalTimesVideos, overallVideosPerSession = interArrivals()
 
-plotHistogram1(overallInterArrivalTimes,False,range(0,100,2),
-	False,False,saveflag,"Overall Average InterArrival Time per session(in seconds)",fname+": Overall Average InterArrival Time per session",1)
+plotHistogram1(overallInterArrivalTimes,False,range(0,100,2),False,False,saveflag,"Overall Average InterArrival Time per session(in seconds)",
+	fname+": Overall Average InterArrival Time per session",1)
 
 
-plotHistogram1(overallInterArrivalTimesVideos,False,range(0,30,1),
-	False,False,saveflag,"Overall Average InterArrival Time for Videos per session(in Min)",fname+": Overall Average InterArrival Time for Videos per session",1)
+plotHistogram1(overallInterArrivalTimesVideos,False,range(0,30,1),False,False,saveflag,"Overall Average InterArrival Time for Videos per session(in Min)",
+	fname+": Overall Average InterArrival Time for Videos per session",1)
 
 plotHistogram1(overallVideosPerSession,False,range(0,50,1),
 	False,False,saveflag,"Number of videos per session","Distribution of Number of videos per session",1)
