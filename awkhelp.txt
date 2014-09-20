@@ -1,0 +1,19 @@
+awk '{print $1}' input_file
+
+awk 'BEGIN {sum=0} {sum=sum+$5} END {print sum}' input_file
+
+awk '{print $4,$5}' input_file
+
+ awk '{ if($9 == "t4") print $0;}' input_file
+
+awk 'BEGIN { for(i=1;i<=5;i++) print "square of", i, "is",i*i; }'
+
+awk -F: '{print $2} input_file  #F refers to file separator
+
+awk '{print NF}' input_file
+This will display the number of columns in each row.
+
+awk '{print NF}' input_file
+This will display the number of columns in each row.
+
+

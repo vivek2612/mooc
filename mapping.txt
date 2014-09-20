@@ -1,0 +1,213 @@
+=========================================
+Coming to the course page for the first time:
+GET /courseware/course/9/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/
+
+[html, 9/]
+
+Fetches pages for tutorial schedules, video schedules etc. 
+GET /courseware/api/course/9/pages/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, pages/]
+
+.. static objects like css and jsx. 
+
+Fetches contents by default. 
+
+
+
+======================================
+Clicking on Contents : 
+
+Fetching all the groups:
+GET /courseware/api/course/13/groups/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/13/
+[json, groups]
+
+Many such responses are received on clicking on contents tab. Fetches all the concepts within a group.
+GET /courseware/api/group/22/published_concepts/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/13/
+[json, published_concepts]
+
+Data corresponding to each concept/topic. Many such requests.
+GET /concept/api/concept/67/get_concept_page_data/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/13/
+[json, get_concept_page_data]
+
+===========================================
+Information
+GET /courseware/api/course/13/courseInfo/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/13/
+[json, courseInfo]
+
+
+=============================================
+Discussion:
+GET /forum/api/forum/9/user_setting/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, user_setting]
+GET /forum/api/forum/9/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, forum]
+GET /forum/api/forum/9/threads/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, threads]
+
+
+Clicking on one of the way of ordering the threads:
+GET /forum/api/forum/9/threads/?format=json&order=earlier HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, order, threads]
+
+
+Add Thread:
+POST /forum/api/forum/9/add_thread/?format=json HTTP/1.1  http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, add_thread]
+POST /forum/api/thread/74/add_tag/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, add_tag]
+
+Selecting a tag in discussion forum:
+GET /forum/api/tag/111/threads/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, threads]
+
+Subscribe or unsubscribe:
+GET /forum/api/thread/74/subscribe/?format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[json, subscribe] [json, unsubscribe]
+
+Searching via topic:
+GET /forum/api/forum/9/search_threads/?search=pipeline&format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+[search, json, search_threads]
+
+Load More Threads :
+GET /forum/api/forum/9/threads/?page=2&format=json HTTP/1.1 http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+Clicking on one question: It fetches comments and its subsequent replies.
+GET /forum/api/thread/48/comments/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+GET /forum/api/comment/51/replies/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+GET /forum/api/comment/49/replies/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+=============================================
+Progress:
+GET /courseware/api/course/9/progress/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+GET /courseware/api/course/9/progress/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+=============================================
+Scorecard : 
+GET /courseware/api/course/9/get_all_public_marks/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+GET /courseware/api/course/9/get_marks_setting/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+=============================================
+
+Assignments:
+GET /assignments/9 HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+then some static objects like css and jsx. 
+
+Clicking on the expanding button of assignment, fetches the list of programs associated. 
+GET /assignments/program/list/?asgnid=35 HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/assignments/13
+
+Clicking on assignment, fetches details of assignment. A new html object.
+GET /assignments/details/30 HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/assignments/details/29
+2. Some static objects as well ( css and jsx)
+=============================================
+
+Video viewing schedule
+GET /document/api/page/35/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+Tutorial schedule
+GET /document/api/page/36/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+Tutorial Groups
+GET /document/api/page/37/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+House Points
+GET /document/api/page/63/?format=json HTTP/1.1, http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+===========================================
+NAVIGATION BAR
+
+Bodhitree Click:
+GET / HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/mission/
+GET /courseware/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/mission/
+GET /courseware/api/all_courses/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/
+fetches images like this for all courses.
+http://bodhitree1.cse.iitb.ac.in/media/uploads/course_image/cs305-image.jpg
+static css files and the media/images for different courses. 
+
+
+Home Button
+GET /courseware/courseslist/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+.. and some static objects like css and jsx. 
+
+Courses Button 
+GET /courseware/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/courseslist/
+GET /courseware/api/all_courses/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/
+fetches images like this for all courses.
+http://bodhitree1.cse.iitb.ac.in/media/uploads/course_image/cs305-image.jpg
+...and some static objects.
+
+Username Button
+My Courses :(same as clicking on course list)
+
+...and some static objects.
+
+Past Courses :
+GET /courseware/pastcourses/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/courseslist/
+
+My Profile:
+GET /user/view-profile/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/courseslist/
+...and some static objects.
+
+Settings:
+GET /user/settings/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/
+...and some static objects.
+
+
+logout:
+GET /accounts/logout/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/user/settings/
+
+GET /accounts/login/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/user/settings/
+...and some static objects.
+
+=============================================
+login
+POST /accounts/login/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/accounts/login/
+GET /courseware/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/accounts/login/
+
+fetches all the courses as well.
+GET /courseware/api/all_courses/?format=json HTTP/1.1
+Referer: http://bodhitree1.cse.iitb.ac.in/courseware/
+
+fetches images like this for all courses.
+http://bodhitree1.cse.iitb.ac.in/media/uploads/course_image/cs305-image.jpg
+
+...and some static objects.
+
+=========================================================
+
+Clickin on the slides button of a concept on contents page
+GET /media/uploads/video_other/hw-impl-prelims.pdf HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+
+=========================================================
+
+
+Clicking on a concept 
+
+GET /concept/74/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+fetches concept data :
+GET /concept/api/concept/42/get_concept_page_data/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+-concept.jpg
+-vide-js.png
+GET /static/video-js/video-js.png HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+Video File:
+GET /media/static/video/arithmetic-in-mips.mp4 HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+... and some static files. 
+
+On Clicking on 'PLAY' Button : 
+GET /static/video-js/video-js.png HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+
+On reaching a quiz:
+GET /quiz/api/quiz/273/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+GET /quiz/api/quiz/273/get_question_modules/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+GET /quiz/api/question_module/211/get_questions/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+
+On submitting an answer:
+POST /quiz/api/question/264/submit_answer/?format=json HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+
+On clicking on 'slides' :
+GET /media/uploads/video_other/arithmetic-in-mips.pdf HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/concept/42/
+
+=======================================================
+
+Bottom Bar :
+GET /mission/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/team/
+GET /team/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/courseware/course/9/
+GET /contact/ HTTP/1.1 Referer: http://bodhitree1.cse.iitb.ac.in/team/
