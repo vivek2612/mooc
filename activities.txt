@@ -5,7 +5,8 @@ discussion_clicking
 ordering_threads
 adding_thread
 selecting_tag
-subscribe_unsubscribe
+subscribe
+unsubscribe
 searching_thread
 loading_more_threads
 thread_clicking

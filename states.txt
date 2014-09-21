@@ -1,0 +1,9 @@
+entry
+browse
+discussion
+assignments
+progress_scorecard
+watching_video
+giving_quiz
+watching_slides
+exit
