@@ -1,32 +1,35 @@
-from globalMaps import *
+from globalmaps import *
 class Activity:
 	name = ""
 	isComplete = False	#Whether all the required features have been seen for the activity
 	featuresCount = 0
 
 	def __init__(self,activityName):
-		name = activityName
+		self.name = activityName
 	
 	def getFeatures(self):
-		return activityFeaturesMap[name]
+		return activityFeaturesMap[self.name]
 
-	def update(feature):
-		featuresCount += 1
-		if not name in uncountableActivities:
-			if featuresCount == len(activityFeaturesMap[name]):
-				isComplete = True
+	def update(self, feature):
+		self.featuresCount += 1
+		if not self.name in uncountableActivities: #uncountableActivities from globalMap.py
+			if self.featuresCount == len(activityFeaturesMap[self.name]):
+				self.isComplete = True
 
-	def canAccomodate(feature):
-		if name=="thread_clicking":
-			if feature==['GET', 'json', 'comments'] and featuresCount!=0:
+	def canAccomodate(self, feature):
+		if self.name=="thread_clicking":
+			# thread_clicking activity.
+			# featureCount!=0 means you have already seen 'comments' request.
+			# So if a new comment request comes, it's not the same activity.
+			if feature==['GET', 'json', 'comments'] and self.featuresCount!=0:
 				return False
 			else:
 				return True
 		else:
 			return True
 
-	def isFull():
-		return isComplete
+	def isFull(self):
+		return self.isComplete
 
 
 '''

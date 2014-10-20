@@ -3,18 +3,29 @@ activityFeaturesMapfile='activity-features-mapping.txt'
 featureActivityMapfile='feature-activity-mapping.txt'
 activityStateMapfile='activity-state-mapping.txt'
 
-stateList=[]
-activityFeaturesMap={}
-featureActivityMap={}
-activityStateMap={}
+stateList={} #{state : stateID}
+activityFeaturesMap={} #{activity : feature}
+featureActivityMap={}	#{feature : activity_name}
+activityStateMap={}	#{activity_name : stateName}
 
-uncountableActivities=["course_page_arrival", "contents_clicking", "thread_clicking"]
+uncountableActivities=["course_page_arrival", "contents_clicking", "thread_clicking",\
+						"courses_clicking", "bodhitree_clicking", "login_clicking", "my_courses_clicking"]
+
+ignoredFeatures = [['GET', 'html', 'media'],['GET', 'ico']]
+
+#uncountableActivities : the activities which donot have a fixed number of features. 
+
+# For eg. : "thread_clicking" can induce many request for replies of that thread.
+# The bottom 4 "courses_clicking", "bodhitree_clicking", "login_clicking", "my_courses_clicking" 
+# 	are due to presence of course_image. (Since there can be multiple courses. )
 
 def initializeStates():
 	f=open(statesfile, 'r')
 	lines=f.readlines()
+	count = 0
 	for line in lines:
-		stateList.append(line.strip())
+		stateList[line.strip()] = count
+		count += 1
 
 def initializeActivityFeaturesMap():
 	f=open(activityFeaturesMapfile, 'r')

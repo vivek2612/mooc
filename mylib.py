@@ -103,6 +103,8 @@ def getRespTime(arr):
 
 def getUpstreamRespTime(arr):
 	return arr[5].strip().split(" ")[1]
+
+
 #==============================================================================
 
 def median(mylist):
@@ -200,6 +202,12 @@ def createDir(dirName):
 
 #===================================================================================
 
+def isStaticReq(req): # as obtained from req = getCompleteRequest(arr)
+	if "static" in req.split('/'):
+		return True
+	else:
+		return False
+
 def isImageObject(reqObject):
 	val = re.match("(.*\.png)|(.*\.jpg)|(.*\.jpeg)|(.*\.JPEG)|(.*\.ico)|(.*\.JPG)", reqObject)
 	return False if val is None else True
@@ -215,6 +223,15 @@ def isJsObject(reqObject):
 def isVideoObject(reqObject):
 	val = re.match("(.*\.mp4)|(.*\.flv)", reqObject)
 	return False if val is None else True
+
+def isPdfObject(reqObject):
+	val = re.match("(.*\.pdf)", reqObject)
+	return False if val is None else True
+
+def isVideoJsPngObject(reqObject):	#for detecting whether play button is clicked.
+	val = re.match("(.*video-js.png)", reqObject)
+	return False if val is None else True
+
 
 def isFontObject(reqObject):
 	val = re.match("(.*\.mp4)|(.*\.flv)", reqObject)
@@ -301,6 +318,13 @@ def isValidStatusCode(statusCode):
 	else:
 		return False
 
+def isRedirectionStatusCode(statusCode):
+	if statusCode/100==3:
+		return True
+	else:
+		return False
+
+
 
 def is_number(s):
     try:
@@ -308,3 +332,47 @@ def is_number(s):
         return True
     except ValueError:
         return False
+
+# ====================================================================
+
+def extractFeatureVector(req): # as obtained from req = getCompleteRequest(arr)
+	arr = req.split()
+	reqType = arr[0].strip()
+	reqArr = list(reversed(re.split('\?|/',arr[1]))) #splitting by '?' and '/' and reversing. 
+	feature = []
+
+	# print reqArr
+	# print req
+	feature.append(reqType) #GET or POST
+	i = 0	
+	firstElem = reqArr[i].strip()
+	if reqArr[i].strip()=="" or is_number(reqArr[i].strip()):
+		feature.append('html')
+	else:
+		if '.' in reqArr[i]:	#for cases like video.mp4 and slides.pdf
+			reqArr[i] = reqArr[i].split('.')[1]	#replace them by .mp4 and .pdf only
+			if(reqArr[i]=="pdf"):
+				feature.append(reqArr[i]);
+				return feature
+
+		params = reqArr[i].strip('? ').split('&')
+		for ele in params:
+			ele = ele.split('=')
+			if ele[0]!="format":
+				feature += [ele[0]]
+			else:
+				feature += [ele[1]]
+		
+	reqArr = [x for x in reqArr if x != '']
+	if firstElem=="":
+		i=-1
+	if(i==-1 and len(reqArr)==0):
+		feature.append('HOME')
+	elif (i+2)<len(reqArr) and is_number( reqArr[i+1].strip()):
+		feature.append(reqArr[i+2])
+	elif (i+1 < len(reqArr)):
+		feature.append(reqArr[i+1])
+
+	if 'null' in feature:
+		feature = None
+	return feature

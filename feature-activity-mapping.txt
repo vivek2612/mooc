@@ -25,6 +25,7 @@
 ['GET', 'html', 'HOME'] : bodhitree_clicking
 ['GET', 'html', 'courseslist'] : home_clicking
 ['GET', 'html', 'courseware'] : courses_clicking
+['GET', 'jpg', 'course_image'] : courses_clicking
 ['GET', 'json', 'all_courses'] : courses_clicking
 ['GET', 'html', 'pastcourses'] : past_courses_clicking
 ['GET', 'html', 'view-profile'] : profile_clicking
@@ -32,7 +33,7 @@
 ['GET', 'html', 'logout'] : logout_clicking
 ['GET', 'html', 'login'] : logout_clicking
 ['POST', 'html', 'login'] : login_clicking
-['GET', 'pdf', 'video_other'] : slides_clicking
+['GET', 'pdf'] : slides_clicking
 ['GET', 'html', 'concept'] : concept_clicking
 ['GET', 'json', 'get_concept_page_data'] : concept_clicking
 ['GET', 'video-js.png', 'video-js'] : concept_clicking
@@ -45,3 +46,5 @@
 ['GET', 'html', 'mission'] : mission_clicking
 ['GET', 'html', 'team'] : contact_clicking
 ['GET', 'html', 'contact'] : team_clicking
+['POST', 'json', 'add_comment'] : adding_comment
+['POST', 'json', 'add_reply'] : adding_reply

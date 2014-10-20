@@ -4,6 +4,8 @@ information_clicking :browse
 discussion_clicking :discussion
 ordering_threads :discussion
 adding_thread :discussion
+adding_comment :discussion
+adding_reply :discussion
 selecting_tag :discussion
 subscribe :discussion
 unsubscribe :discussion
@@ -15,7 +17,7 @@ scorecard_clicking :progress_scorecard
 assignments_clicking :assignments
 expanding_assignment :assignments
 assignment_details :assignments
-video_schedule_clicking :browse
+other_info_clicking :browse
 bodhitree_clicking :browse
 home_clicking :browse
 courses_clicking :browse

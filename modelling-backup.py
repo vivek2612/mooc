@@ -20,7 +20,7 @@ f.close()
 
 prevtime = -1
 curSession = Session()
-print "New Session..."
+# print "New Session..."
 
 for line in lines:
 	arr = getArray(line)
@@ -32,19 +32,16 @@ for line in lines:
 		timeInMin += 24*60	# for cases like when 23:59 and then 00:02. So add 24*60.
 	
 	if ((timeInMin - prevtime) > threshold) and prevtime != -1:
-		print "Closing old session"
-		print"--------------------------------"
+		# print "Closing old session"
 		curSession.C[stateList[curSession.curState] ][stateList["exit"]] += 1
 		curSession.writeInFile(matrix_fname)
 		curSession = Session()
-		print "New Session..."
 		
 	elif curSession.curActivity and curSession.curActivity.name == "logout_clicking":
-		print "Closing old session"
-		print"--------------------------------"
+		# print "Closing old session"
 		curSession.writeInFile(matrix_fname)
 		curSession = Session()
-		print "New Session..."
+		# print "New Session..."
 
 
 
@@ -82,8 +79,8 @@ for line in lines:
  				stateID = stateList[curSession.curState]
  				curSession.C[stateID][stateID] += 1
  				curSession.curActivity = Activity(curSession.curActivity.name) #reset activity
- 				print "(Transition) : ", curSession.curState, "=> ", curSession.curState, 
- 				print '\t',curSession.curActivity.name+" started..*************"
+ 				# print "(Transition) : ", curSession.curState, "=> ", curSession.curState
+ 				# print curSession.curActivity.name+" started..*************"
 
 
  		else:
@@ -101,14 +98,14 @@ for line in lines:
  			newActivityName = featureActivityMap[str(feature)]
  			prevStateId = stateList[curSession.curState]
  			newState = activityStateMap[newActivityName]
- 			print "(Transition) : ", curSession.curState, "=> ", newState,
+ 			# print "(Transition) : ", curSession.curState, "=> ", newState
  			newStateId = stateList[newState] #the state need not be different
  			curSession.curActivity = Activity(newActivityName) #Reset activity
  			curSession.curActivity.update(str(feature)) #update activity
  			curSession.curState = newState #Update state (Transition)
  			Session.C[prevStateId][newStateId] += 1 
 
- 			print '\t',curSession.curActivity.name+" started..*************"
+ 			# print curSession.curActivity.name+" started..*************"
 
  	
 

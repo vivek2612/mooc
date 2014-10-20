@@ -1,3 +1,6 @@
+# NOt quite useful since you have to mannually remoe entries from the txt file whichi
+# is generated. 
+
 import sys
 f=open(sys.argv[1],'r')
 lines = f.readlines()
