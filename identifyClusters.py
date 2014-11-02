@@ -8,27 +8,6 @@ from globalmaps import *
 matrix_dir = "matrix_dir" # dir containing the files corresponding to users' session matrices.
 allFiles = os.listdir(matrix_dir)
 
-
-
-# Take first K files. From each file, pick up the first matrix or point as the centroid.
-# This is done to initialze clusters. 
-def initClusters():
-	i = 0;
-	clusterList = []
-	for afile in allFiles:
-		if(i==K):
-			break
-		f = open(matrix_dir+"/"+afile,'r')
-		lines = f.readlines()
-		f.close()
-		for line in lines:
-			centroid = eval(line)
-			cluster = Cluster(centroid);
-			clusterList.append(cluster)
-			break
-		i += 1
-	return clusterList
-	
 allPoints = []	#Each point represent one matrix
 # Read all the files. Pick up all the points/matrices from the file and dump ...
 # it in allPoints array
@@ -41,11 +20,24 @@ def collectAllPoints():
 			mat = eval(line)
 			allPoints.append(mat)
 
+# Every 10th point is chosen as the cluster centroid. 
+# This is done to initialze clusters. 
+def initClusters():
+	i = 0;
+	clist = []
+	for i in range(K):
+		centroid = allPoints[i*10];
+		cluster = Cluster(centroid);
+		clist.append(cluster)
+	return clist
+
+
 # Runs K-means clustering algorithm for nIterations times.
 def runClustering(nIterations):
 	while (nIterations!=0):
 		for cluster in clusterList:
 			cluster.nMembers = 0
+			# cluster.memberList = []
 		for point in allPoints:
 			dist = []
 			for cluster in clusterList:
@@ -62,17 +54,17 @@ def runClustering(nIterations):
 
 # After clustering is complete, Returns mean, variance, and ...
 # coefficient of variation of intra-cluster distances. 
-def intraClusterStats():
+def intraClusterStats(clist):
 	summation = 0.0
-	for cluster in clusterList:
+	for cluster in clist:
 		summation += cluster.intraClusterDist()
 	mean = summation / float(K)
 	summation = 0.0
-	for cluster in clusterList:
+	for cluster in clist:
 		summation += (cluster.intraClusterDist() - mean)**2
 	variance = summation / float(K-1)
 	coeffVariation = math.sqrt(variance)/ mean
-	return coeffVariation
+	return variance, coeffVariation
 
 # distance b/w two clusters = distance b/w their centroids
 # Used in calculating inter cluster statistics
@@ -87,35 +79,37 @@ def getDistaceBwClusters(cluster1, cluster2):
 	return math.sqrt(sumOfSquares)
 
 # Dij : distance between two clusters. 
-def interClusterStats():
+def interClusterStats(clist):
 	nDistances = float((K*(K-1))/2.0)
 	distances  = []
 	for i in range(K):
 		for j in range(i+1, K):
-			distances.append(getDistaceBwClusters(clusterList[i], clusterList[j]))
+			distances.append(getDistaceBwClusters(clist[i], clist[j]))
 	mean = sum(distances) / nDistances
 	summation = 0.0
 	for dist in distances:
 		summation += (dist - mean)**2 
 	variance = summation / (nDistances-1)
 	coeffVariation = math.sqrt(variance)/ mean
-	return coeffVariation 
+	return variance, coeffVariation 
 
 
-
-collectAllPoints()
-nIterations = 10
+nIterations = 10 #Though 5 were sufficient
+K = int (sys.argv[1])
 clusterList = []# list of cluster obejects.
-K = 4
+collectAllPoints()
 clusterList = initClusters()
 runClustering(nIterations)
-for cluster in clusterList:
-	print cluster.nMembers
+v_intra, coeffVariation_intra = intraClusterStats(clusterList)
+v_inter, coeffVariation_inter = interClusterStats(clusterList)
+# print K, v_intra, v_inter, coeffVariation_intra, coeffVariation_inter
 
-coeffVariation_intra = intraClusterStats()
-print coeffVariation_intra
-coeffVariation_inter = interClusterStats()
-print coeffVariation_inter
+
+for cluster in clusterList:
+	cluster.normalize()
+	print cluster.centroid
+
+
 
 
 

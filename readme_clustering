@@ -1,0 +1,20 @@
+runclustering.sh : Runs clustering process for different values of K. 
+	- To print out the stats associated with clustering ( varinces, coeff of variation etc.)
+	- Files used:
+		identifyClusters.py. (takes 1 argument = K)
+
+
+1. identifyClusters.py. takes 1 argument = K
+	- Can print out final centroids. 
+	- Can print out stats associated with clustering. (coeff of variation, variance etc.)
+
+
+2. plot-stateDiagram.py <filename with centroids>
+	- Input : File with centroids ( as output by identifyClusters.py )
+	- Output : Generate K images named <i>stategraph.png where i = [0,K-1]. K = number of clusters.
+				Also generates html page 'state-diagram.html'. Showing these user profiles.
+
+3. plotClustering.py 
+	- Input : <filename with stats of betacv and betavar>
+			  (As output by identifyClusters.py while printing stats)
+	- Ouput : plots two graphs. These are called clusterplots. 

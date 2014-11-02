@@ -11,6 +11,8 @@ class Cluster:
 		self.centroid = _centroid #Initialize the centroid
 		self.nRows = len(_centroid)
 		self.nCols = len(_centroid[0])
+		self.nMembers = 0
+		self.memberList = []
 
 	def updateCluster(self, matrix): # updates centroid and nMembers
 		for i in range(self.nRows):
@@ -41,6 +43,19 @@ class Cluster:
 			return sumDist/(float)(self.nMembers)
 		else:
 			return -1
+
+	def normalize(self):
+		for i in range(self.nRows):
+			rowSum = 0;
+			for j in range(self.nCols):
+				rowSum += self.centroid[i][j]
+			if rowSum==0:
+				continue
+			for j in range(self.nCols):
+				self.centroid[i][j] /= rowSum
+				self.centroid[i][j] = float('%.2f' % self.centroid[i][j])
+			
+
 
 
 
