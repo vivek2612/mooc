@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 import matplotlib.pyplot as plt
@@ -24,6 +25,7 @@ Mozilla/5.0 (Windows NT 6.3; WOW64; rv:32.0) Gecko/20100101 Firefox/32.0
 '''
 
 
+
 def getArray(line):
 	arr = line.split('"')
 	if(" " in arr):
@@ -36,6 +38,8 @@ def getRawUsername(arr):
 def sortOrder(item):
 	val = item[1]
 	return (val[0]-2012)*365*24*3600 + val[1]*30*24*3600 + val[2]*24*3600 +  val[3]
+
+
 
 def getUsername(arr):
 	username = getRawUsername(arr)
@@ -50,7 +54,7 @@ def getUsername(arr):
 				usernameTimeMap = ipUserMap[getIP(arr)]
 				l = sorted(usernameTimeMap.iteritems(), key=sortOrder,reverse=True)
 				timestamps = [timestamp for username,timestamp in l]
-				mytimestamp = getDate(arr)+[timeInSeconds(getTime(arr))]
+				mytimestamp = getDate(arr)+[timeInSeconds(getTimeArr(arr))]
 				username = l[usernameIndex(timestamps, mytimestamp)][0]
 				return username
 			else:
@@ -73,12 +77,27 @@ def getDate(arr):
 	date = [int(x) for x in date]
 	return list(reversed(date))	#[year, month, day]
 
-def getTime(arr): 
+# Returns only hh,mm,ss
+def getTimeArr(arr): 
 	temp = arr[0].strip().split(":")
 	hour = int(temp[1])
 	minutes = int(temp[2])
 	secs = int(temp[3].split()[0])
 	return [hour, minutes, secs]
+
+# Returns complete time with date. 
+def getTime(arr): 
+	temp = arr[0].strip().split(":")
+	hour = int(temp[1])
+	minutes = int(temp[2])
+	secs = int(temp[3].split()[0])
+
+	fulldate = temp[0].split("[")[1]
+	datearr = fulldate.split("/")
+	day = int(datearr[0])
+	month = int(MONTH_MAP[datearr[1]])
+	year = int(datearr[2])
+	return datetime.datetime(year = year, month=month, day=day, hour=hour, minute=minutes, second=secs)
 
 def getCompleteRequest(arr):
 	return arr[1].strip()
@@ -306,9 +325,9 @@ def createIpUserMap(lines):
 			continue
 		if ipUserMap.has_key(ip):
 			if not ipUserMap[ip].has_key(username):
-				ipUserMap[ip][username] = getDate(arr)+[timeInSeconds(getTime(arr))]
+				ipUserMap[ip][username] = getDate(arr)+[timeInSeconds(getTimeArr(arr))]
 		else:
-			ipUserMap[ip] = {username:getDate(arr)+[timeInSeconds(getTime(arr))]}
+			ipUserMap[ip] = {username:getDate(arr)+[timeInSeconds(getTimeArr(arr))]}
 	return ipUserMap
 
 # 2xx responses are considered valid 

@@ -14,8 +14,7 @@ uncountableActivities=["course_page_arrival", "contents_clicking", "thread_click
 ignoredFeatures = [['GET', 'html', 'media'],['GET', 'ico']]
 
 #uncountableActivities : the activities which donot have a fixed number of features. 
-
-# For eg. : "thread_clicking" can induce many request for replies of that thread.
+# For eg. : "thread_clicking" can induce many requests for replies of that thread.
 # The bottom 4 "courses_clicking", "bodhitree_clicking", "login_clicking", "my_courses_clicking" 
 # 	are due to presence of course_image. (Since there can be multiple courses. )
 

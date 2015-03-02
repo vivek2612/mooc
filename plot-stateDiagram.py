@@ -33,7 +33,8 @@ for line in lines:
 	addNodes(graph)
 	for i in range(len(stateList)):
 		for j in range(len(stateList)):
-			graph.add_edge(pydot.Edge(pydot.Node(idToState[i]), pydot.Node(idToState[j]), label=mat[i][j],color=colors[i%9]))
+			if(mat[i][j]>0.1):
+				graph.add_edge(pydot.Edge(pydot.Node(idToState[i]), pydot.Node(idToState[j]), label=mat[i][j],color=colors[i%9]))
 	graph.write_png(str(count)+'stategraph.png')
 	count+=1
 

@@ -1,3 +1,6 @@
+# Takes input the log file containing records of single user. 
+# Saves the matrix generated in the dir matrix_dir with filename=username_matrix
+
 from mylib import *
 import os
 import sys
@@ -13,51 +16,53 @@ matrix_fname = list(reversed(fname.split('/')))[0] #Input : "xdir/../.../log/use
 matrix_fname += "_matrix" #user1_matrix
 matrix_dir = "matrix_dir"
 createDir(matrix_dir) #createDir creates (if not exists) matrix_dir in current directory.
+createDir("waitTimeMatrix_dir")
 matrix_fname = matrix_dir+"/"+matrix_fname
-f = open(matrix_fname,'w')
-f.close()
+# f = open(matrix_fname,'w')
+# f.close()
 
 
 prevtime = -1
 curSession = Session()
-print "New Session..."
+# print "New Session..."
 
 for line in lines:
 	arr = getArray(line)
-	timeArr = getTime(arr)
+	curTime = getTime(arr)
+	if prevtime==-1:
+		prevtime = curTime
+		
 	statusCode = getStatusCode(arr)
+	timeDiff = (curTime - prevtime).total_seconds()	#Time differnce in seconds
+	if(timeDiff<0):
+		print "Warning : Time differnce should not be negative!"
+		exit(0)
 
-	timeInMin = timeInMinutes(timeArr)
-	if timeInMin < prevtime:
-		timeInMin += 24*60	# for cases like when 23:59 and then 00:02. So add 24*60.
-	
-	if ((timeInMin - prevtime) > threshold) and prevtime != -1:
-		print "Closing old session"
-		print"--------------------------------"
+	if (timeDiff/60.0 > threshold):
+		# print "Closing old session"
+		# print"--------------------------------"
 		curSession.C[stateList[curSession.curState] ][stateList["exit"]] += 1
 		curSession.writeInFile(matrix_fname)
 		curSession = Session()
-		print "New Session..."
+		timeDiff = 0
+		# print "New Session..."
 		
 	elif curSession.curActivity and curSession.curActivity.name == "logout_clicking":
-		print "Closing old session"
-		print"--------------------------------"
+		# print "Closing old session"
+		# print"--------------------------------"
 		curSession.writeInFile(matrix_fname)
 		curSession = Session()
-		print "New Session..."
+		timeDiff = 0
+		# print "New Session..."
 
 
-
-
-	prevtime = timeInMin
-	if(isRedirectionStatusCode(statusCode)): 
+	prevtime = curTime
+	if(isRedirectionStatusCode(statusCode)): 	
 		continue
 
 	request = getCompleteRequest(arr)
 	if(request=="-"): continue
  	reqObject = request.split()[1].strip()
-
-
 
  	if (not isStaticReq(request)) or \
  		(isVideoJsPngObject(reqObject) or isVideoObject(reqObject) or isPdfObject(reqObject)) :
@@ -81,9 +86,12 @@ for line in lines:
  				# Another instance of same activity, Self Loop 
  				stateID = stateList[curSession.curState]
  				curSession.C[stateID][stateID] += 1
+
+ 				curSession.Z[stateID][stateID] += timeDiff  # since this is transition.
+
  				curSession.curActivity = Activity(curSession.curActivity.name) #reset activity
- 				print "(Transition) : ", curSession.curState, "=> ", curSession.curState, 
- 				print '\t',curSession.curActivity.name+" started..*************"
+ 				# print "(Transition) : ", curSession.curState, "=> ", curSession.curState, 
+ 				# print '\t',curSession.curActivity.name+" started..*************"
 
 
  		else:
@@ -91,42 +99,23 @@ for line in lines:
  			# State Transition will follow
 
  			if(not featureActivityMap.has_key(str(feature))):
- 				print "-------------------------------------------------------"
- 				print feature, request
- 				print "Could not find match of this feature !"
- 				print "-------------------------------------------------------"
+ 				# print "-------------------------------------------------------"
+ 				# print feature, request
+ 				# print "Could not find match of this feature !"
+ 				# print "-------------------------------------------------------"
  				
  				continue
 
  			newActivityName = featureActivityMap[str(feature)]
  			prevStateId = stateList[curSession.curState]
  			newState = activityStateMap[newActivityName]
- 			print "(Transition) : ", curSession.curState, "=> ", newState,
+ 			# print "(Transition) : ", curSession.curState, "=> ", newState,
  			newStateId = stateList[newState] #the state need not be different
  			curSession.curActivity = Activity(newActivityName) #Reset activity
  			curSession.curActivity.update(str(feature)) #update activity
  			curSession.curState = newState #Update state (Transition)
- 			Session.C[prevStateId][newStateId] += 1 
-
- 			print '\t',curSession.curActivity.name+" started..*************"
+ 			curSession.C[prevStateId][newStateId] += 1 
+ 			curSession.Z[prevStateId][newStateId] += timeDiff
+ 			# print '\t',curSession.curActivity.name+" started..*************"
 
  	
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
-
-
-
-
-

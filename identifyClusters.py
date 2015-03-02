@@ -1,3 +1,5 @@
+# After the matrices have been generated. The clustering happens in this program. 
+
 from mylib import *
 import os
 import sys
@@ -6,9 +8,14 @@ from Cluster import *
 from globalmaps import *
 
 matrix_dir = "matrix_dir" # dir containing the files corresponding to users' session matrices.
+
 allFiles = os.listdir(matrix_dir)
+userClusterMap = {}  # {username : [1,1,0,0,4]} . i.e. count of sessions in each cluster
+
 
 allPoints = []	#Each point represent one matrix
+allWaitTimes = [] #Each point represent one wait-time matrix 
+allUsernames = [] #All usernames corresponding to every matrix 
 # Read all the files. Pick up all the points/matrices from the file and dump ...
 # it in allPoints array
 def collectAllPoints():
@@ -16,9 +23,21 @@ def collectAllPoints():
 		f = open(matrix_dir+"/"+afile,'r')
 		lines = f.readlines()
 		f.close()
+		uname = afile.split("_")[0]
+		userClusterMap[uname] = [0]*K
+		for line in lines:
+			mat = eval(line)	
+			allPoints.append(mat)
+			allUsernames.append(uname) #filename is same as username_matrix. 
+
+		waitTimeMatrix_dir = "waitTimeMatrix_dir" 
+		f = open(waitTimeMatrix_dir+"/"+uname,'r')
+		lines = f.readlines()
+		f.close()
 		for line in lines:
 			mat = eval(line)
-			allPoints.append(mat)
+			allWaitTimes.append(mat)
+
 
 # Every 10th point is chosen as the cluster centroid. 
 # This is done to initialze clusters. 
@@ -27,7 +46,8 @@ def initClusters():
 	clist = []
 	for i in range(K):
 		centroid = allPoints[i*10];
-		cluster = Cluster(centroid);
+		centroid_waitTime = allWaitTimes[i*10]
+		cluster = Cluster(centroid, centroid_waitTime);
 		clist.append(cluster)
 	return clist
 
@@ -37,19 +57,26 @@ def runClustering(nIterations):
 	while (nIterations!=0):
 		for cluster in clusterList:
 			cluster.nMembers = 0
-			# cluster.memberList = []
-		for point in allPoints:
+			cluster.memberList = []
+			cluster.userList = []
+		index = 0
+		for point in allPoints:  #point here refers to the matrix. 
 			dist = []
 			for cluster in clusterList:
 				dist.append(cluster.getDistance(point))
 			minDist = min(dist)
 			clusterIndex = dist.index(minDist)
-			clusterList[clusterIndex].updateCluster(point) #updates the centroid of the cluster
+			clusterList[clusterIndex].updateCluster(point, allWaitTimes[index]) #updates the centroid of the cluster
 			# On last iteration, store each point with its cluster.
 			# Will be used to find intra-cluster distance later.
 			if(nIterations==1):
-				clusterList[clusterIndex].addPointToCluster(point)
+				uname = allUsernames[index]
+				clusterList[clusterIndex].addPointToCluster(point, uname) #the username corresponding to the point
+				userClusterMap[uname][clusterIndex] += 1
+
+			index += 1
 		nIterations -= 1
+
 
 
 # After clustering is complete, Returns mean, variance, and ...
@@ -105,9 +132,22 @@ v_inter, coeffVariation_inter = interClusterStats(clusterList)
 # print K, v_intra, v_inter, coeffVariation_intra, coeffVariation_inter
 
 
+# Now that you have the count of session in each cluster for a particular user, we need to decide 
+# which cluster user belongs to. So we adopt approach of MAXFREQUENCY. 
+# for uname in userClusterMap.keys():
+# 	userClusterMap[uname] = userClusterMap[uname].index(max(userClusterMap[uname]))
+# print userClusterMap
+
+for user in userClusterMap.keys():
+	print user, ":", userClusterMap[user]
+
 for cluster in clusterList:
 	cluster.normalize()
-	print cluster.centroid
+	# print cluster.centroid
+	# print cluster.centroid_waitTime
+	# print cluster.nMembers
+	# print cluster.userList
+	# print "=================================="
 
 
 
